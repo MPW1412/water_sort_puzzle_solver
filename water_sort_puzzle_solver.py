@@ -70,8 +70,12 @@ class Tube:
         if len(self.fluids) == self.height:
             return False
         if not self.fluids or self.fluids[-1] == tube.fluids[-1]:
-            if SPEED_OPTION:
-                if len(tube.fluids) >= 2 and tube.fluids[-2] == tube.fluids[-1] and (len(self.fluids) + 1) == self.height:
+            if SPEED_OPTION and self.fluids:
+                r = 1
+                while len(tube.fluids) > r + 1 and tube.fluids[-r-1] == self.fluids[-1]:
+                    r += 1
+                
+                if r > 1 and (len(self.fluids) + r) >= self.height:
                     return False
             self.fluids.append(tube.fluids.pop())
             self.pourIn(tube)
