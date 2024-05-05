@@ -90,16 +90,14 @@ class Tube:
         
         
 class Game:
-    def __init__(self, num_tubes, parent = None):
-        self.num_tubes = num_tubes
-        self.parent = parent
+    def __init__(self):
+        self.num_tubes = 0
+        self.parent = None
         self.tubes = []
 
     def addTube(self, tube):
-        if len(self.tubes) < self.num_tubes:
-            self.tubes.append(tube)
-        else:
-            raise GameFullError("Game is full, cannot add more tubes")
+        self.tubes.append(tube)
+        self.num_tubes += 1
 
     def completed(self) -> bool:
         return all(tube.completed() for tube in self.tubes)
@@ -113,7 +111,7 @@ class Game:
         return NotImplemented
 
 # Beispiel Verwendung:
-game = Game(14)
+game = Game()
 game.addTube(Tube(['HB', 'P', 'T', 'R']))
 game.addTube(Tube(['HG', 'R', 'B', 'HB']))
 game.addTube(Tube(['R', 'G', 'O', 'GR']))
