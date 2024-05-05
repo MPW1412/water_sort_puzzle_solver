@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from copy import deepcopy
+import math
 import sys
 
 TUBE_HEIGHT = 4
@@ -136,11 +137,12 @@ game.addTube(Tube([]))
 
 def print_tubes(tubes):
     num_tubes = len(tubes)
-    num_groups = (num_tubes + 6) // 7
+    num_per_row = math.ceil(num_tubes / 2)
+    num_groups = (num_tubes + num_per_row - 1) // num_per_row
 
     for i in range(num_groups):
-        start_idx = i * 7
-        end_idx = min((i + 1) * 7, num_tubes)
+        start_idx = i * num_per_row
+        end_idx = min((i + 1) * num_per_row, num_tubes)
         
         group_strings = [str(tube) for tube in tubes[start_idx:end_idx]]
 
