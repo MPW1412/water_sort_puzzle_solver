@@ -3,6 +3,10 @@ from copy import deepcopy
 import sys
 
 TUBE_HEIGHT = 4
+# Prevent pouring, if receiving tube can't receive all of it
+# Shortens solution path by preventing unnecessary forth and back pouring
+# I'm quite sure this does not break anything, but not 100%.
+SPEED_OPTION = True
 
 
 class GameFullError(Exception):
@@ -56,6 +60,9 @@ class Tube:
         if len(self.fluids) == self.height:
             return False
         if not self.fluids or self.fluids[-1] == tube.fluids[-1]:
+            if SPEED_OPTION:
+                if len(tube.fluids) >= 2 and tube.fluids[-2] == tube.fluids[-1] and (len(self.fluids) + 1) == self.height:
+                    return False
             self.fluids.append(tube.fluids.pop())
             self.pourIn(tube)
             return True
