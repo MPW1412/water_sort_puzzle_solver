@@ -111,36 +111,6 @@ class Game:
             return self.gameset() == other.gameset()
         return NotImplemented
 
-# Beispiel Verwendung:
-#game = Game()
-#game.addTube(Tube(['HB', 'P', 'T', 'R']))
-#game.addTube(Tube(['HG', 'R', 'B', 'HB']))
-#game.addTube(Tube(['R', 'G', 'O', 'GR']))
-#game.addTube(Tube(['HB', 'L', 'RO', 'B']))
-#game.addTube(Tube(['P', 'P', 'L', 'B']))
-#game.addTube(Tube(['DG', 'G', 'O', 'T']))
-#game.addTube(Tube(['L', 'DG', 'T', 'O']))
-#game.addTube(Tube(['RO', 'GR', 'O', 'P']))
-#game.addTube(Tube(['G', 'RO', 'T', 'GR']))
-#game.addTube(Tube(['HG', 'R', 'B', 'GR']))
-#game.addTube(Tube(['HG', 'DG', 'L', 'DG']))
-#game.addTube(Tube(['HG', 'RO', 'G', 'HB']))
-#game.addTube(Tube([]))
-#game.addTube(Tube([]))
-
-game = Game()
-game.addTube(Tube(['T', 'P', 'O', 'T']))
-game.addTube(Tube(['HB', 'P', 'HB', 'P']))
-game.addTube(Tube(['R', 'HB', 'G', 'T']))
-game.addTube(Tube(['GR', 'L', 'L', 'T']))
-game.addTube(Tube(['P', 'B', 'L', 'B']))
-game.addTube(Tube(['GR', 'L', 'O', 'G']))
-game.addTube(Tube(['B', 'O', 'GR', 'R']))
-game.addTube(Tube(['G', 'GR', 'R', 'B']))
-game.addTube(Tube(['R', 'O', 'G', 'HB']))
-game.addTube(Tube([]))
-game.addTube(Tube([]))
-
 def print_tubes(tubes):
     num_tubes = len(tubes)
     num_per_row = math.ceil(num_tubes / 2)
@@ -165,10 +135,11 @@ def set_cursor_and_print_tubes(tubes):
     print_tubes(tubes)
 
 def solution_found(game: 'Game'):
+    solution = []
     print('=' * 80)
     print('Solution: ')
     solution.append(game)
-    lineup_solution_path(game)
+    lineup_solution_path(game, solution)
     for i in range(len(solution)):
         if i > 0:
             for x in range(len(solution[i].tubes)):
@@ -181,36 +152,60 @@ def solution_found(game: 'Game'):
         
     sys.exit(0)
 
-def lineup_solution_path(game: 'Game'):
+def lineup_solution_path(game: 'Game', solution):
     if game.parent:
         solution.insert(0, game.parent)
-        lineup_solution_path(game.parent)
+        lineup_solution_path(game.parent, solution)
 
-games = [game]
-gameset_history = []
-gameset_history.append(games[0].gameset())
-solution = []
 
-print_tubes(games[0].tubes)
+    
+def solve(game: 'Game'):
+    games = [game]
+    gameset_history = []
+    gameset_history.append(games[0].gameset())
+    
+    print_tubes(games[0].tubes)
+    
+    while games:
+        parent_game = games.pop()
+        child_game = deepcopy(parent_game)
+        child_game.parent = parent_game
+        for i in range(parent_game.num_tubes):
+            for x in range(parent_game.num_tubes):
+                if i == x:
+                    continue
+                if child_game.tubes[x].pourIn(child_game.tubes[i]):
+                    if not child_game.gameset() in gameset_history:
+                        games.append(child_game)
+                        gameset_history.append(child_game.gameset())
+                        set_cursor_and_print_tubes(child_game.tubes)
+                        #print_tubes(child_game.tubes)
+                        if child_game.completed():
+                            solution_found(child_game)
+                    child_game = deepcopy(parent_game)
+                    child_game.parent = parent_game
+                        
+    print('No solution found!')
+    sys.exit(1)
 
-while games:
-    parent_game = games.pop()
-    child_game = deepcopy(parent_game)
-    child_game.parent = parent_game
-    for i in range(parent_game.num_tubes):
-        for x in range(parent_game.num_tubes):
-            if i == x:
-                continue
-            if child_game.tubes[x].pourIn(child_game.tubes[i]):
-                if not child_game.gameset() in gameset_history:
-                    games.append(child_game)
-                    gameset_history.append(child_game.gameset())
-                    set_cursor_and_print_tubes(child_game.tubes)
-                    #print_tubes(child_game.tubes)
-                    if child_game.completed():
-                        solution_found(child_game)
-                child_game = deepcopy(parent_game)
-                child_game.parent = parent_game
-                    
-print('No solution found!')
-sys.exit(1)
+def main():
+    game = Game()
+    game.addTube(Tube(['HB', 'G', 'HG', 'B']))
+    game.addTube(Tube(['HG', 'L', 'R', 'HB']))
+    game.addTube(Tube(['HG', 'L', 'B', 'P']))
+    game.addTube(Tube(['G',  'L', 'GR', 'P']))
+    game.addTube(Tube(['O', 'GR', 'GR', 'P']))
+#    game.addTube(Tube(['o',  'T', 'G', 'O']))
+    game.addTube(Tube(['B',  'T', 'G', 'O']))
+    game.addTube(Tube(['T', 'P', 'O', 'B']))
+#    game.addTube(Tube(['b',  'R', 'HG', 'G']))
+    game.addTube(Tube(['O',  'R', 'HG', 'G']))
+    game.addTube(Tube(['GR',  'T', 'T', 'R']))
+    game.addTube(Tube(['L', 'R', 'HB', 'HB']))
+    game.addTube(Tube([  ]))
+    game.addTube(Tube([  ]))
+
+    solve(game)
+    
+if __name__ == '__main__':
+    main()
