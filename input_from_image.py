@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 from scipy.ndimage import label, generate_binary_structure, find_objects
 import matplotlib.pyplot as plt
+from water_sort_puzzle_solver import Game, Tube, solve
 
 COLORS = {
     'R': (180, 58, 57),
@@ -15,7 +16,8 @@ COLORS = {
     'GR': (112, 112, 112),
     'HB': (85, 163, 229),
     'DG': (57, 82, 16),
-    'P': (176, 89, 193)
+    'P': (176, 89, 193),
+    'X': (14, 15, 33)
 }
 
 def crop_image(filename):
@@ -123,10 +125,14 @@ cropped_img = crop_image(filename)
 
 tube_images = extract_tubes(cropped_img)
 
+g = Game()
 for tube_image in tube_images:
     extracted_colors = get_tube_colours(tube_image)
+    color_keys = []
     for c in extracted_colors:
         color_key = find_closest_color(c)
-        print(color_key)
+        color_keys.append(color_key)
+    filtered_list = [s for s in color_keys if s != 'X']
+    g.addTube(Tube(filtered_list))
         
-
+solve(g)
