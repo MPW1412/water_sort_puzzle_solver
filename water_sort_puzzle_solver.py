@@ -31,18 +31,28 @@ class Tube:
     def __init__(self, fluids):
         self.height = TUBE_HEIGHT
         self.fluids = fluids
+        self.flag_in = False
+        self.flag_out= False
 
     def __str__(self):
         overline = '\u203E'
         formatted_fluids = []
+        s = '  '
+        if self.flag_in:
+            s = 'vv'
+        if self.flag_out:
+            s = '^^'
         for _ in range(self.height - len(self.fluids)):
-            formatted_fluids.append('|    |')
+            formatted_fluids.append(f'| {s} |')
+            s = '  '
 
         for fluid in reversed(self.fluids):
             color = self.COLORS.get(fluid.strip(), (0, 0, 0)) 
 
             rgb_code = ';'.join(map(str, color))
-            formatted_fluid = f'\033[48;2;{rgb_code}m|    |\033[0m'
+            
+            formatted_fluid = f'\033[48;2;{rgb_code}m| {s} |\033[0m'
+            s = '  '
             formatted_fluids.append(formatted_fluid)
 
         formatted_fluids.append('\u203E' * 6)
@@ -150,6 +160,12 @@ def solution_found(game: 'Game'):
     solution.append(game)
     lineup_solution_path(game)
     for i in range(len(solution)):
+        if i > 0:
+            for x in range(len(solution[i].tubes)):
+                if len(solution[i].tubes[x].fluids) > len(solution[i-1].tubes[x].fluids):
+                    solution[i].tubes[x].flag_in = True
+                if len(solution[i].tubes[x].fluids) < len(solution[i-1].tubes[x].fluids):
+                    solution[i].tubes[x].flag_out = True
         print(f"Step {i}:")
         print_tubes(solution[i].tubes)
         
