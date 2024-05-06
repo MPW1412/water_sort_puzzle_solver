@@ -26,7 +26,8 @@ class Tube:
         'GR': (112, 112, 112),
         'HB': (85, 163, 229),
         'DG': (57, 82, 16),
-        'P': (176, 89, 193)
+        'P': (176, 89, 193),
+        '?': (255, 255, 255)
     }
 
     def __init__(self, fluids):
@@ -66,6 +67,8 @@ class Tube:
             return False
         if not self.fluids and all(x == tube.fluids[0] for x in tube.fluids):
             return False # prevent useless step
+        if tube.fluids[-1] == '?':
+            return False
         if tube.fluids[-1] not in self.COLORS:
             raise ValueError("Unknown Colour Exception")
         if len(self.fluids) == self.height:
@@ -174,6 +177,8 @@ def solve(game: 'Game'):
             for x in range(parent_game.num_tubes):
                 if i == x:
                     continue
+                if child_game.tubes[i].fluids and child_game.tubes[i].fluids[-1] == '?':
+                    solution_found(child_game)
                 if child_game.tubes[x].pourIn(child_game.tubes[i]):
                     if not child_game.gameset() in gameset_history:
                         games.append(child_game)
@@ -190,18 +195,19 @@ def solve(game: 'Game'):
 
 def main():
     game = Game()
-    game.addTube(Tube(['HB', 'G', 'HG', 'B']))
-    game.addTube(Tube(['HG', 'L', 'R', 'HB']))
-    game.addTube(Tube(['HG', 'L', 'B', 'P']))
-    game.addTube(Tube(['G',  'L', 'GR', 'P']))
-    game.addTube(Tube(['O', 'GR', 'GR', 'P']))
-#    game.addTube(Tube(['o',  'T', 'G', 'O']))
-    game.addTube(Tube(['B',  'T', 'G', 'O']))
-    game.addTube(Tube(['T', 'P', 'O', 'B']))
-#    game.addTube(Tube(['b',  'R', 'HG', 'G']))
-    game.addTube(Tube(['O',  'R', 'HG', 'G']))
-    game.addTube(Tube(['GR',  'T', 'T', 'R']))
-    game.addTube(Tube(['L', 'R', 'HB', 'HB']))
+    game.addTube(Tube(['T', 'L', 'HG', 'DG']))
+    game.addTube(Tube(['?', '?', 'DG', 'R']))
+    game.addTube(Tube(['?', '?', 'G', 'O']))
+    game.addTube(Tube(['?', '?', 'O', 'HG']))
+    game.addTube(Tube(['?', '?', '?', 'P']))
+    game.addTube(Tube(['B', 'T', 'T', 'B']))
+    game.addTube(Tube(['?', '?', 'GR', 'HG']))
+
+    game.addTube(Tube(['?', '?', 'R', 'T']))
+    game.addTube(Tube(['?', '?', '?', 'G']))
+    game.addTube(Tube(['?', 'L', 'HB', 'G']))
+    game.addTube(Tube(['?', '?', '?', 'O']))
+    game.addTube(Tube(['?', '?', 'R', 'B']))
     game.addTube(Tube([  ]))
     game.addTube(Tube([  ]))
 
