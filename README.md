@@ -17,7 +17,7 @@ It will use object detection to parse the fluids and start the solver right away
 
 ## Covered riddles
 
-Use '?' as color input. The solver will run until it hits the first questionmark. You can then play the game until this point and replace the questionmark by the discovered color. Try to play around as far as you get to uncover more fields. Complete input colors as far as possible and re-run the game until all hidden fields are known.
+Use '?' as color input. The solver will run until it hits the first questionmark. You can then play the game until this point and replace the questionmark by the discovered color. Try to play around as far as you get to uncover more fields. Complete input colors as far as possible and re-run the solver until all hidden fields are known.
 
 ## Manual Usage
 
